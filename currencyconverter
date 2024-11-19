@@ -1,0 +1,27 @@
+import urllib.request, urllib.parse, urllib.error
+import json
+
+api_key = "4a22e16225a9cf782b559f3e"
+base_url = "https://v6.exchangerate-api.com/v6/4a22e16225a9cf782b559f3e/latest/USD"
+params = {'apiKey': api_key}
+url = base_url + '?' + urllib.parse.urlencode(params)
+
+response = urllib.request.urlopen(url)
+data = response.read().decode()
+json_data = json.loads(data)
+conversion_rates = json_data["conversion_rates"]
+
+def convert_currency(base_currency, target_currency, amount):
+
+    if base_currency not in conversion_rates or target_currency not in conversion_rates:
+        raise ValueError("Currency code could not be found in conversion rates")
+    amount_in_usd = amount / conversion_rates[base_currency]
+    converted_amount = amount_in_usd * conversion_rates[target_currency]
+    return converted_amount
+
+
+base_currency = input("Enter the base currency code (e.g., USD): ").upper()
+target_currency = input("Enter the target currency code (e.g., EUR): ").upper()
+amount = float(input("Enter your desired amount: "))
+result = convert_currency(base_currency, target_currency, amount)
+print(f"{amount} {base_currency} is equivalent to {result:.2f} {target_currency}")
